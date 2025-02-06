@@ -70,7 +70,6 @@
 // }
 /////
 
-
 pipeline {
     agent any
 
@@ -100,6 +99,7 @@ pipeline {
                         checkovAndTerraform.installCheckov()
                     } catch (Exception e) {
                         echo "Checkov installation failed: ${e.message}"
+                        sh 'pwd'
                         sh 'ls -la ${WORKSPACE}'
                         sh 'ls -la ${WORKSPACE}/jenkins-shared-library'
                         error('Checkov installation failed. Stopping the pipeline.')
