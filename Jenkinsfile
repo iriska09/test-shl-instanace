@@ -69,7 +69,6 @@
 //     }
 // }
 /////
-
 @Library('jenkins-shared-library@main') _
 
 pipeline {
@@ -98,6 +97,7 @@ pipeline {
             steps {
                 script {
                     try {
+                        // Call the installCheckov function from the shared library
                         checkovAndTerraform.installCheckov()
                     } catch (Exception e) {
                         echo "Checkov installation failed: ${e.message}"
@@ -115,12 +115,15 @@ pipeline {
                     def checkovPassed = false
                     try {
                         sh 'ls -la ${WORKSPACE}/jenkins-shared-library/custom_policies'
+                        // Call the runCheckovAndTerraformPlan function from the shared library
                         checkovAndTerraform.runCheckovAndTerraformPlan()
                         checkovPassed = true
                     } catch (Exception e) {
                         echo "Checkov failed: ${e.message}"
                     }
-                    if (!checkovPassed) {
+                    if (checkovPassed) {
+                        currentBuild.result = 'SUCCESS'
+                    } else {
                         error('Checkov issues found. Stopping the pipeline.')
                     }
                 }
@@ -160,3 +163,4 @@ pipeline {
         }
     }
 }
+
