@@ -78,8 +78,12 @@ pipeline {
             steps {
                 script {
                     sh '''
+                    # Set the Terraform binary path
+                    TERRAFORM_BIN=/var/jenkins_home/bin/terraform
+                    
+                    # Apply the Terraform plan
                     echo "Applying Terraform plan"
-                    terraform apply -auto-approve plan.out
+                    $TERRAFORM_BIN apply -auto-approve plan.out
                     '''
                 }
             }
