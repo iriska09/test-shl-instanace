@@ -46,10 +46,10 @@ pipeline {
                 checkout scm
             }
         }
-        stage('Install Checkov and Terraform') {
+        stage('Install Checkov') {
             steps {
                 script {
-                    checkovAndTerraform.installCheckovAndTerraform()
+                    checkovAndTerraform.installCheckov()
                 }
             }
         }
