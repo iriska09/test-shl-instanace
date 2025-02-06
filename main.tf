@@ -7,6 +7,7 @@ resource "aws_instance" "example" {
   instance_type = "t2.micro"
 
   tags = {
-    Name = "test-instance"
+    Name        = "example-instance"
+    Environment = "production"
   }
 }
