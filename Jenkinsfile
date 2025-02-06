@@ -70,6 +70,8 @@
 // }
 /////
 
+@Library('jenkins-shared-library@main') _
+
 pipeline {
     agent any
 
@@ -102,6 +104,7 @@ pipeline {
                         sh 'pwd'
                         sh 'ls -la ${WORKSPACE}'
                         sh 'ls -la ${WORKSPACE}/jenkins-shared-library'
+                        error('Checkov installation failed. Stopping the pipeline.')
                     }
                 }
             }
@@ -111,11 +114,9 @@ pipeline {
                 script {
                     def checkovPassed = false
                     try {
-                        timeout(time: 60, unit: 'MINUTES') {
-                            sh 'ls -la ${WORKSPACE}/jenkins-shared-library/custom_policies'
-                            checkovAndTerraform.runCheckovAndTerraformPlan()
-                            checkovPassed = true
-                        }
+                        sh 'ls -la ${WORKSPACE}/jenkins-shared-library/custom_policies'
+                        checkovAndTerraform.runCheckovAndTerraformPlan()
+                        checkovPassed = true
                     } catch (Exception e) {
                         echo "Checkov failed: ${e.message}"
                     }
