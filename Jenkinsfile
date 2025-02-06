@@ -82,7 +82,7 @@ pipeline {
         stage('Clone Shared Library') {
             steps {
                 // Clone the shared library repository
-                sh 'https://github.com/iriska09/jenkins-shared-library.git'
+                sh 'git clone https://github.com/iriska09/jenkins-shared-library.git'
             }
         }
         stage('Install Checkov') {
