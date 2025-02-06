@@ -21,8 +21,10 @@
 //                 script {
 //                     def checkovPassed = false
 //                     try {
-//                         checkovAndTerraform.runCheckovAndTerraformPlan()
-//                         checkovPassed = true
+//                         timeout(time: 60, unit: 'MINUTES') {
+//                             checkovAndTerraform.runCheckovAndTerraformPlan()
+//                             checkovPassed = true
+//                         }
 //                     } catch (Exception e) {
 //                         echo "Checkov failed: ${e.message}"
 //                     }
@@ -66,18 +68,21 @@
 //         }
 //     }
 // }
-
-
-////
-@Library('jenkins-shared-library@main') _
-
+/////
 pipeline {
     agent any
 
     stages {
         stage('Checkout') {
             steps {
+                // Checkout the main repository
                 checkout scm
+            }
+        }
+        stage('Clone Shared Library') {
+            steps {
+                // Clone the shared library repository
+                sh 'https://github.com/iriska09/jenkins-shared-library.git'
             }
         }
         stage('Install Checkov') {
