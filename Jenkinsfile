@@ -81,6 +81,12 @@ pipeline {
                 checkout scm
             }
         }
+        stage('Clean Workspace') {
+            steps {
+                // Remove the existing shared library directory if it exists
+                sh 'rm -rf jenkins-shared-library'
+            }
+        }
         stage('Clone Shared Library') {
             steps {
                 // Clone the shared library repository
