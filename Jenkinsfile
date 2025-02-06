@@ -93,7 +93,7 @@ pipeline {
                     def checkovPassed = false
                     try {
                         timeout(time: 60, unit: 'MINUTES') {
-                            sh 'ls -la ${WORKSPACE}/jenkins-shared-library/custom_policies'
+                            sh 'sudo ls -la ${WORKSPACE}/jenkins-shared-library/custom_policies'
                             checkovAndTerraform.runCheckovAndTerraformPlan()
                             checkovPassed = true
                         }
