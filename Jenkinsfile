@@ -202,6 +202,7 @@ pipeline {
         stage('Install Checkov') {
             steps {
                 script {
+                    echo "Executing Install Checkov"
                     installCheckov()
                 }
             }
@@ -210,6 +211,7 @@ pipeline {
         stage('Run Checkov and Terraform Plan') {
             steps {
                 script {
+                    echo "Executing Run Checkov and Terraform Plan"
                     runCheckovAndTerraformPlan()
                 }
             }
@@ -223,8 +225,8 @@ pipeline {
             }
             steps {
                 script {
+                    echo "Executing Terraform Apply"
                     sh '''
-                    echo "Applying Terraform plan"
                     export TERRAFORM_BIN=/var/jenkins_home/bin/terraform
                     $TERRAFORM_BIN apply -auto-approve plan.out
                     '''
