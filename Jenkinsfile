@@ -197,7 +197,10 @@
 
 pipeline {
     agent any
-
+    environment {
+        // Adjust the path for custom policies in the shared library
+        customPoliciesPath = "${env.JENKINS_HOME}/workspace/${JOB_NAME}/@Library('jenkins-shared-library')/custom_policies"
+    }
     stages {
         stage('Install Checkov') {
             steps {
