@@ -193,60 +193,43 @@
 
 
 /// CGP 
-@Library('jenkins-shared-library') _  // Import the shared library
+@Library('jenkins-shared-library') _
 
 pipeline {
     agent any
 
-    environment {
-        // You can define any environment variables here, e.g., for Terraform
-        TERRAFORM_BIN = '/var/jenkins_home/bin/terraform'
-    }
-
     stages {
-        stage('Checkout') {
-            steps {
-                // Checkout the main repository
-                checkout scm
-            }
-        }
         stage('Install Checkov') {
             steps {
                 script {
-                    // Call the function to install Checkov
-                    checkovAndTerraform.installCheckov()
+                    installCheckov()
                 }
             }
         }
-        
+
         stage('Run Checkov and Terraform Plan') {
             steps {
                 script {
-                    // Call the function to run Terraform plan and Checkov analysis
-                    checkovAndTerraform.runCheckovAndTerraformPlan()
+                    runCheckovAndTerraformPlan()
                 }
             }
         }
 
         stage('Apply Terraform') {
+            when {
+                expression {
+                    return fileExists('plan.out') && fileExists('plan.json') 
+                }
+            }
             steps {
                 script {
-                    // If Checkov passes, apply the Terraform plan
-                    echo "If Checkov passed, we can apply the Terraform changes."
                     sh '''
-                    terraform apply -auto-approve plan.out
+                    echo "Applying Terraform plan"
+                    export TERRAFORM_BIN=/var/jenkins_home/bin/terraform
+                    $TERRAFORM_BIN apply -auto-approve plan.out
                     '''
                 }
             }
-        }
-    }
-    
-    post {
-        success {
-            echo 'Terraform and Checkov executed successfully.'
-        }
-        failure {
-            echo 'The pipeline failed. Please check the logs for errors.'
         }
     }
 }
