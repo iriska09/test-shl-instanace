@@ -193,50 +193,54 @@
 
 
 /// CGP 
-@Library('jenkins-shared-library') _  // Load the shared library
+@Library('jenkins-shared-library') _  // Import the shared library
 
 pipeline {
     agent any
+
+    environment {
+        // You can define any environment variables here, e.g., for Terraform
+        TERRAFORM_BIN = '/var/jenkins_home/bin/terraform'
+    }
+
     stages {
         stage('Install Checkov') {
             steps {
                 script {
-                    installCheckov()  // This will install Checkov and set up the virtual environment
+                    // Call the function to install Checkov
+                    installCheckov()
                 }
             }
         }
+        
         stage('Run Checkov and Terraform Plan') {
             steps {
                 script {
-                    runCheckovAndTerraform()  // This will run Checkov checks and generate the Terraform plan
+                    // Call the function to run Terraform plan and Checkov analysis
+                    runCheckovAndTerraformPlan()
                 }
             }
         }
+
         stage('Apply Terraform') {
-            when {
-                expression {
-                    // Check if Checkov passed and the pipeline didn't fail
-                    return currentBuild.result == 'SUCCESS'
-                }
-            }
             steps {
                 script {
-                    echo "Checkov passed. Proceeding with Terraform apply."
-
-                    // Apply the Terraform plan
+                    // If Checkov passes, apply the Terraform plan
+                    echo "If Checkov passed, we can apply the Terraform changes."
                     sh '''
-                    TERRAFORM_BIN=/var/jenkins_home/bin/terraform
-                    $TERRAFORM_BIN apply -auto-approve plan.out
+                    terraform apply -auto-approve plan.out
                     '''
                 }
             }
         }
     }
-
+    
     post {
+        success {
+            echo 'Terraform and Checkov executed successfully.'
+        }
         failure {
-            echo "Checkov failed. Stopping pipeline. No changes will be applied."
-            // Optional: Send notifications or further alerts here
+            echo 'The pipeline failed. Please check the logs for errors.'
         }
     }
 }
