@@ -193,7 +193,7 @@
 
 
 /// CGP 
-@Library('jenkins-shared-library') _  // Load the shared library
+@Library('jenkins-shared-library') _
 
 pipeline {
     agent any
@@ -211,7 +211,7 @@ pipeline {
         stage('Run Checkov and Terraform Plan') {
             steps {
                 script {
-                    echo "Starting Run Checkov and Terraform Plan Stage..."
+                    echo "Starting Terraform Plan and Checkov..."
                     runCheckovAndTerraformPlan()
                 }
             }
@@ -220,27 +220,18 @@ pipeline {
         stage('Apply Terraform') {
             when {
                 expression {
-                    return fileExists('plan.out') && fileExists('plan.json')
+                    return fileExists('plan.out') && fileExists('plan.json') 
                 }
             }
             steps {
                 script {
-                    echo "Applying Terraform Plan..."
+                    echo "Applying Terraform..."
                     sh '''
-                    TERRAFORM_BIN=/var/jenkins_home/bin/terraform
+                    export TERRAFORM_BIN=/var/jenkins_home/bin/terraform
                     $TERRAFORM_BIN apply -auto-approve plan.out
                     '''
                 }
             }
-        }
-    }
-
-    post {
-        success {
-            echo 'Pipeline executed successfully.'
-        }
-        failure {
-            echo 'Pipeline execution failed. Please check the logs for errors.'
         }
     }
 }
