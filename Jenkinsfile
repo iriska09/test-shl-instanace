@@ -193,7 +193,7 @@
 
 
 /// CGP 
-@Library('jenkins-shared-library') _
+@Library('jenkins-shared-library') _  // Load the shared library
 
 pipeline {
     agent any
@@ -201,27 +201,42 @@ pipeline {
         stage('Install Checkov') {
             steps {
                 script {
-                    installCheckov()
+                    installCheckov()  // This will install Checkov and set up the virtual environment
                 }
             }
         }
-        stage('Run Checkov and Terraform') {
+        stage('Run Checkov and Terraform Plan') {
             steps {
                 script {
-                    runCheckovAndTerraform()
+                    runCheckovAndTerraform()  // This will run Checkov checks and generate the Terraform plan
                 }
             }
         }
         stage('Apply Terraform') {
             when {
-                expression { return env.CHECKOV_EXIT_CODE == "0" }
+                expression {
+                    // Check if Checkov passed and the pipeline didn't fail
+                    return currentBuild.result == 'SUCCESS'
+                }
             }
             steps {
-                sh '''
-                echo "Applying Terraform..."
-                /var/jenkins_home/bin/terraform apply -auto-approve plan.out
-                '''
+                script {
+                    echo "Checkov passed. Proceeding with Terraform apply."
+
+                    // Apply the Terraform plan
+                    sh '''
+                    TERRAFORM_BIN=/var/jenkins_home/bin/terraform
+                    $TERRAFORM_BIN apply -auto-approve plan.out
+                    '''
+                }
             }
+        }
+    }
+
+    post {
+        failure {
+            echo "Checkov failed. Stopping pipeline. No changes will be applied."
+            // Optional: Send notifications or further alerts here
         }
     }
 }
