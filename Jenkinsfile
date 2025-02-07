@@ -197,9 +197,6 @@
 
 pipeline {
     agent any
-    options {
-        cleanWs()  // Ensures a fresh workspace
-    }
     stages {
         stage('Install Checkov') {
             steps {
