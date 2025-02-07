@@ -204,11 +204,17 @@ pipeline {
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the main repository
+                checkout scm
+            }
+        }
         stage('Install Checkov') {
             steps {
                 script {
                     // Call the function to install Checkov
-                    installCheckov()
+                    checkovAndTerraform.installCheckov()
                 }
             }
         }
@@ -217,7 +223,7 @@ pipeline {
             steps {
                 script {
                     // Call the function to run Terraform plan and Checkov analysis
-                    runCheckovAndTerraformPlan()
+                    checkovAndTerraform.runCheckovAndTerraformPlan()
                 }
             }
         }
