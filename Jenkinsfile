@@ -203,7 +203,7 @@ pipeline {
             steps {
                 script {
                     echo "Starting Install Checkov Stage..."
-                    installCheckov()
+                    checkovAndTerraform.installCheckov()
                 }
             }
         }
@@ -212,7 +212,7 @@ pipeline {
             steps {
                 script {
                     echo "Starting Terraform Plan and Checkov..."
-                    runCheckovAndTerraformPlan()
+                    checkovAndTerraform.runCheckovAndTerraformPlan()
                 }
             }
         }
