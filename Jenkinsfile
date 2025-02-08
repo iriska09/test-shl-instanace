@@ -42,4 +42,10 @@ pipeline {
             }
         }
     }
+post {
+    always {
+        cleanWs()  // Cleans up workspace at the end of every build
+    }
+}
+
 }
