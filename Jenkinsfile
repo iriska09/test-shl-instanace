@@ -199,7 +199,7 @@ pipeline {
     agent any
     environment {
         // Get the workspace path where your shared library is stored
-        customPoliciesPath = "${WORKSPACE}/@Library('jenkins-shared-library')/custom_policies"
+        customPoliciesPath = "/var/jenkins_home/workspace/test-shared-libraries@2/jenkins-shared-library/custom_policies"
     }
     stages {
         stage('Install Checkov') {
